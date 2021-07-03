@@ -11,7 +11,7 @@ def group(svgs):
     Args:
         svgs ([[string, int]]): [[svg filename, length of animation]]
     """
-    base = handler_from_file(svgs[0][0])
+    base = handler_from_file(svgs[len(svgs)-1][0])
     tags = base.find_all('path')
     soups = [handler_from_file(name) for [name, dur] in svgs]
     durs = [svg[1] for svg in svgs]
@@ -33,18 +33,18 @@ def group(svgs):
             continue
 
         # print(f"ds: {len(ds)}, durs: {len(durs)}, range: {range(1,len(ds))} ")
-        for cnt in range(1,len(ds)):
-            animId = f"{id}-{str(cnt)}"
+        for cnt in range(0,len(ds)):
+            animId = f"{id}{str(cnt+1)}"
             animate = base.new_tag('animate', id=animId)
             animate.attrs['to'] = ds[cnt]
             animate.attrs['attributeName'] = 'd'
             animate.attrs['dur'] = f"{durs[cnt]}ms"
             animate.attrs['fill'] = "freeze"
             
-            if cnt == 1:    #If this is the first animation layer
-                animate.attrs['begin'] = f"0s;{id}-{str(len(ds) - 1)}.end" #start the animation at 0s, and the end of the last animation(loops)
+            if cnt == 0:    #If this is the first animation layer
+                animate.attrs['begin'] = f"0s;{id}{str(len(ds))}.end" #start the animation at 0s, and the end of the last animation(loops)
             else:
-                animate.attrs['begin'] = f"{id}-{str(cnt - 1)}.end"     #start the animation at the end of the previous animation
+                animate.attrs['begin'] = f"{id}{str(cnt)}.end"     #start the animation at the end of the previous animation
             tag.append(animate)
             
     return base
@@ -55,10 +55,10 @@ def write(output, svg):
 
 
 svgs = [
-    ["./trombone.svg", 1000],
-    ["./trombone2.svg", 1000],
-    ["./trombone3.svg", 1000],
-    ["./trombone4.svg", 1000],
+    ["./trombone.svg", 2000],
+    ["./trombone2.svg", 2000],
+    ["./trombone3.svg", 2000],
+    ["./trombone4.svg", 2000],
 ]
 output="trombone-anim.svg"
 
